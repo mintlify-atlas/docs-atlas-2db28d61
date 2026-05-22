@@ -1,0 +1,79 @@
+---
+title: "Bitácora: registro de actividad y trazabilidad del sistema"
+description: "El módulo Bitácora registra cada acción del sistema con usuario, módulo, entidad afectada, timestamp y resultado para cumplimiento y auditoría interna."
+---
+
+The Bitácora (audit log) provides an immutable record of every action performed in the platform. Every search, comparison, revision update, source configuration change, and login event is written as a `BitacoraAccion` entry. This record supports compliance requirements, enables incident investigation, and gives administrators full traceability over how the system is being used and by whom.
+
+<Note>
+  Only users with the `ADMIN` role can access the Bitácora module.
+</Note>
+
+<Info>
+  The Bitácora is read-only — no entries can be modified or deleted to preserve audit integrity.
+</Info>
+
+## Tabla de eventos
+
+The audit log is rendered as a single full-width table inside a card titled **Historial de Eventos**. All `BitacoraAccion` entries are displayed in reverse-chronological order by default.
+
+| Column | Description |
+|---|---|
+| **Fecha / Hora** | Formatted timestamp of when the action occurred, rendered with `toLocaleString()` (e.g., `10/24/2023, 9:15:00 AM`). |
+| **Usuario** | Display name of the user who performed the action (e.g., `Ana López`, `Admin Sistema`). |
+| **Módulo** | The platform module where the action took place (e.g., `Declaraciones`, `Revisiones`, `Fuentes de Datos`, `Comparación`). |
+| **Acción** | A short description of what was done (e.g., `Comparación Generada`, `Prueba de Conexión`, `Consulta`, `Creación`, `Modificación`). |
+| **Entidad Afectada** | The identifier of the record that was acted upon — an RFC, a revision ID, or a source name — rendered in a monospaced font (e.g., `ROBJ800101XYZ`, `SFP Declaranet Nacional`). |
+| **Resultado** | A badge aligned to the right: `EXITO` (success, green) or `ERROR` (danger, red). |
+
+Example entries from the mock dataset:
+
+```json
+[
+  {
+    "id": "LOG-100",
+    "usuario": "Ana López",
+    "accion": "Comparación Generada",
+    "modulo": "Comparación",
+    "entidadAfectada": "ROBJ800101XYZ",
+    "fecha": "2023-10-24T09:15:00Z",
+    "resultado": "EXITO"
+  },
+  {
+    "id": "LOG-101",
+    "usuario": "Admin Sistema",
+    "accion": "Prueba de Conexión",
+    "modulo": "Fuentes de Datos",
+    "entidadAfectada": "SFP Declaranet Nacional",
+    "fecha": "2023-10-24T10:05:00Z",
+    "resultado": "EXITO"
+  }
+]
+```
+
+## Búsqueda en la bitácora
+
+A search input is available in the top-right corner of the **Historial de Eventos** card header. Type any text to filter the visible rows by `usuario` or `acción`.
+
+- The filter is case-insensitive and applies instantly as you type.
+- Partial matches are supported — entering `"Ana"` will match `"Ana López"`.
+- Clearing the input restores the full list.
+
+The search does not currently support filtering by module, entity, date range, or result — advanced filtering will be added in a future release.
+
+## Resultado de acciones
+
+Each log entry carries one of two outcome values:
+
+<Tabs>
+  <Tab title="EXITO">
+    The action completed successfully. No further intervention is required.
+
+    Displayed as a green `success` badge.
+  </Tab>
+  <Tab title="ERROR">
+    The action failed before completing. This may indicate a connectivity issue with an external data source, a permission violation, or an unhandled server exception.
+
+    Displayed as a red `danger` badge. Review the entry's **Módulo** and **Entidad Afectada** columns and investigate with your system administrator.
+  </Tab>
+</Tabs>

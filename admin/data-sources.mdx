@@ -1,0 +1,93 @@
+---
+title: "Configure external declaration data sources (Fuentes)"
+description: "Manage API connections to external government platforms like SFP and state-level registries. Add, edit, test, and toggle data sources from this module."
+---
+
+Data sources are the external API endpoints the platform queries whenever an auditor searches for patrimonial declarations. Each entry stores the base URL, authentication method, and activation state for one external registry. The NestJS backend reads these configurations at query time to fetch declaration data securely — no API credentials are hardcoded in the frontend. Keeping your sources accurate and tested is therefore critical to search reliability.
+
+## Lista de fuentes configuradas
+
+The Fuentes de Datos page renders one card per configured source in a responsive grid (1 column on mobile, 2 on tablet, 3 on desktop). Each card contains:
+
+- **Nombre de la fuente** — display name shown in the card header (e.g., "SFP Declaranet Nacional").
+- **Estado badge** — `ACTIVA` (green) or `INACTIVA` (grey). Inactive cards are rendered at reduced opacity with a greyscale filter.
+- **URL Base** — the endpoint root rendered in a monospaced, truncated field with a tooltip showing the full value on hover (e.g., `https://api.declaranet.gob.mx/v1`).
+- **Autenticación** — always `Token Bearer (OAuth2)` in the current implementation.
+- **Action buttons** — located in the card footer:
+  - Pencil icon — opens the edit modal pre-filled with this source's data.
+  - Trash icon — opens the delete confirmation modal.
+  - **Probar** — tests the connection to the URL Base.
+  - **Activar / Desactivar** — toggles the `estado` field.
+
+## Añadir nueva fuente
+
+<Steps>
+  <Step title="Open the create modal">
+    Click the **Nueva Fuente** button in the top-right corner of the page header. The "Añadir Fuente de Datos" modal opens.
+  </Step>
+  <Step title="Fill in the fields">
+    Complete both required fields:
+
+    | Field | Description | Example |
+    |---|---|---|
+    | **Nombre** | A human-readable identifier for this source. | `SFP Plataforma Digital Nacional` |
+    | **URL Base** | The root URL of the external API. Must be reachable by the backend. | `https://api.declaranet.gob.mx/v1` |
+
+    Authentication is set to Token Bearer automatically — there is no selector in the current UI.
+  </Step>
+  <Step title="Save the source">
+    Click **Guardar Configuración**. The modal closes and the new source card appears in the grid with `estado: ACTIVA` and the current timestamp as `ultimaSincronizacion`.
+  </Step>
+</Steps>
+
+<Tip>
+  Test the connection after adding or editing a source URL to confirm the endpoint is reachable before activating it.
+</Tip>
+
+## Editar una fuente
+
+<Steps>
+  <Step title="Open the edit modal">
+    Click the **pencil icon** on the card of the source you want to modify. The "Editar Fuente de Datos" modal opens with all current values pre-filled.
+  </Step>
+  <Step title="Modify the fields">
+    Update **Nombre**, **URL Base**, or both. The `estado` field cannot be changed from this modal — use the toggle button on the card to change activation state.
+  </Step>
+  <Step title="Save the changes">
+    Click **Guardar Configuración**. The card in the grid updates immediately to reflect the new values.
+  </Step>
+</Steps>
+
+## Probar conexión
+
+Click the **Probar** button on any source card to verify that the URL Base is reachable.
+
+1. The `RefreshCw` icon animates (spin) while the test runs.
+2. The button is disabled during the test to prevent duplicate requests.
+3. On completion, an alert confirms whether the connection was successful.
+
+Run a connection test after any URL change before re-activating the source.
+
+## Activar / desactivar fuente
+
+Click the **power toggle button** at the bottom-right of any source card to flip its `estado`:
+
+- **ACTIVA → INACTIVA**: The button label changes to "Activar". The card becomes semi-transparent and greyscale. The backend will skip this source during declaration searches.
+- **INACTIVA → ACTIVA**: The card returns to full color and opacity. The source is queried again during searches.
+
+No confirmation dialog is shown for toggling — the change takes effect immediately and can be reversed by clicking again.
+
+## Eliminar fuente
+
+<Steps>
+  <Step title="Initiate deletion">
+    Click the **trash icon** on the source card. A confirmation modal appears with a summary of the action.
+  </Step>
+  <Step title="Confirm">
+    Click **Sí, Eliminar** in the modal to permanently remove the source. Click **Cancelar** to abort with no changes made.
+  </Step>
+</Steps>
+
+<Warning>
+  Deleting a data source is permanent and cannot be undone. Existing revisions linked to this source will retain their historical data, but new searches will no longer query it.
+</Warning>

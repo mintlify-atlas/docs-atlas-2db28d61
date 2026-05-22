@@ -1,0 +1,68 @@
+---
+title: "Control de acceso y visibilidad de módulos por rol"
+description: "Tabla de módulos accesibles por rol (AUDITOR, ADMIN, OIC_CHIEF) y cómo la barra lateral filtra dinámicamente sus elementos según el rol activo."
+---
+
+The sidebar navigation in Evolución Patrimonial is not static — it dynamically filters its items based on the role of the currently logged-in user. Navigation items marked `adminOnly: true` in the `navigation` configuration array (defined in `app/(dashboard)/layout.tsx`) are hidden from users with the `AUDITOR` role and shown only to `ADMIN` and `OIC_CHIEF` users. This means a standard auditor will see a focused, task-oriented menu, while administrators see the full set of platform modules.
+
+---
+
+## Módulos por rol
+
+The table below lists every item in the `navigation` array from `layout.tsx`, its route, whether it carries the `adminOnly` flag, and which roles can access it.
+
+| Module | Route | adminOnly | AUDITOR | ADMIN | OIC_CHIEF |
+|---|---|---|---|---|---|
+| Dashboard Auditor | `/dashboard` | — | Yes | Yes | Yes |
+| Buscar Declaraciones | `/declaraciones/buscar` | — | Yes | Yes | Yes |
+| Comparar | `/comparacion` | — | Yes | Yes | Yes |
+| Mis Revisiones | `/revisiones` | — | Yes | Yes | Yes |
+| Dashboard Admin | `/admin/dashboard` | `true` | No | Yes | Yes |
+| Fuentes de Datos | `/fuentes` | `true` | No | Yes | Yes |
+| Bitácora | `/bitacora` | `true` | No | Yes | Yes |
+
+---
+
+## Implementación del control de acceso
+
+In the sidebar component (`app/(dashboard)/layout.tsx`), each entry in the `navigation` array is an object with the shape:
+
+```typescript
+{
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  adminOnly?: true;  // present only on admin-restricted items
+}
+```
+
+When rendering the navigation list, items with `adminOnly: true` are conditionally hidden based on the current user's role. Standard auditors (`role === 'AUDITOR'`) never see these items in their sidebar, which reduces cognitive load and minimizes accidental navigation to privileged areas.
+
+The three admin-only modules serve distinct administrative functions:
+
+- **Dashboard Admin** (`/admin/dashboard`) — platform-wide operational metrics, distinct from the auditor-facing dashboard
+- **Fuentes de Datos** (`/fuentes`) — manage, test, enable, and disable external declaration data source connections (see `FuenteDatos` interface)
+- **Bitácora** (`/bitacora`) — full audit log of all user actions across the platform (see `BitacoraAccion` interface)
+
+<Warning>
+  Navigating directly to an admin URL (e.g. `/admin/dashboard`, `/fuentes`, `/bitacora`) as a non-admin user may result in unauthorized access in the current MVP, because access control is enforced only at the UI layer through sidebar visibility. The production implementation will include server-side route protection — middleware or route handlers will verify the user's role before rendering any admin page and return a 403 response for unauthorized requests.
+</Warning>
+
+---
+
+## Relación con el modelo User
+
+Access control decisions are driven by the `role` field on the `User` interface:
+
+```typescript
+interface User {
+  id: string;
+  name: string;
+  role: 'AUDITOR' | 'ADMIN' | 'OIC_CHIEF';
+  email: string;
+}
+```
+
+The `currentUser` object exported from `mock/data.ts` is the source of truth for the current session in the MVP. In production, this will be replaced by an authenticated session object retrieved from the auth provider, ensuring that the role value cannot be tampered with client-side.
+
+For a full description of each role's responsibilities, see [User roles](/reference/user-roles).

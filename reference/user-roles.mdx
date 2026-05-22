@@ -1,0 +1,44 @@
+---
+title: "Roles de usuario: AUDITOR, ADMIN y OIC_CHIEF explicados"
+description: "Referencia de los roles AUDITOR, ADMIN y OIC_CHIEF: módulos accesibles, responsabilidades de cada uno y cómo se muestra el rol en la barra lateral."
+---
+
+The platform implements a three-tier role system that governs which modules a user can access, what actions they can perform, and what information is displayed in the sidebar navigation. Every `User` record carries a `role` field typed as `'AUDITOR' | 'ADMIN' | 'OIC_CHIEF'`. When a user logs in, the sidebar dynamically filters its navigation items based on this value, hiding administrative tools from standard auditors and revealing them only for users with elevated roles.
+
+## Role definitions
+
+| Role | Description | Accessible modules |
+|---|---|---|
+| `AUDITOR` | Core audit staff responsible for reviewing individual expedientes. The primary day-to-day users of the platform. | Dashboard Auditor, Buscar Declaraciones, Comparar, Mis Revisiones |
+| `ADMIN` | System administrators who manage data sources, monitor platform activity, and oversee the audit environment. | All AUDITOR modules, plus Dashboard Admin, Fuentes de Datos, Bitácora |
+| `OIC_CHIEF` | The Titular del Órgano Interno de Control — head of the internal control organ. Supervisory role with the broadest access to review all revisions and escalated cases. | Full access to all modules |
+
+See [Access control and module visibility](/reference/access-control) for a complete mapping of navigation items to roles.
+
+---
+
+## Responsabilidades por rol
+
+**AUDITOR** — Performs comparisons between declarations, documents findings in revision expedientes, assigns risk levels, and writes general observations. Auditors work within their assigned caseload and do not have visibility into system configuration or the full audit log.
+
+**ADMIN** — Manages the Fuentes de Datos configuration (adding, testing, enabling, or disabling external data source connections), monitors the Bitácora for system activity and errors, and has access to the Dashboard Admin for a platform-wide operational view. Admins do not necessarily perform front-line audit work.
+
+**OIC_CHIEF** — Reviews escalated expedientes (typically `CRITICO` risk level), approves or closes revisions that require senior sign-off, and oversees the overall audit program. The OIC Chief has read and write access across all modules.
+
+---
+
+## Indicador de rol en la barra lateral
+
+The current user's role is displayed in the **sidebar footer**, below their name, in the bottom-left corner of every page. The label is derived from the `currentUser.role` value as follows:
+
+| `role` value | Label displayed |
+|---|---|
+| `AUDITOR` | Auditor |
+| `ADMIN` | Administrador |
+| `OIC_CHIEF` | Administrador |
+
+The sidebar footer also shows the user's full display name (e.g. `"Ana López (Auditora)"`) and a logout link.
+
+<Note>
+  The current MVP derives the role label from the `currentUser` mock object defined in `mock/data.ts`. In production, roles will be assigned by a system administrator through the admin panel and stored in the authentication layer. The sidebar label will update automatically to reflect the authenticated user's actual role.
+</Note>

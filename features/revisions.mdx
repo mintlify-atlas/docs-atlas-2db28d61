@@ -1,0 +1,77 @@
+---
+title: "Gestionar expedientes de auditoría patrimonial (Revisiones)"
+description: "Mis Revisiones centraliza tus expedientes patrimoniales: busca por RFC o estatus, ordena por riesgo y accede al formulario de observaciones de cada caso."
+---
+
+Cada vez que guardas una comparación patrimonial como revisión, la plataforma crea un **expediente** en **Mis Revisiones** (`/revisiones`). Ese expediente centraliza la información del análisis, el formulario técnico de observaciones, las evidencias adjuntas y el historial de cambios de estatus. Mis Revisiones es el módulo donde gestionas el ciclo de vida completo de tus casos de auditoría.
+
+<Tip>
+Usa la barra de búsqueda con el RFC del servidor público para localizar de inmediato todos los expedientes vinculados a esa persona, sin importar el año o estatus del caso.
+</Tip>
+
+## Lista de expedientes
+
+La pantalla principal muestra una tabla con todos los expedientes asignados al auditor en sesión. Las columnas son:
+
+| Columna | Descripción |
+|---|---|
+| **Expediente** | Identificador único del caso (p. ej. `REV-001`). |
+| **Servidor Público** | Nombre completo del servidor auditado con su RFC en texto pequeño debajo. |
+| **Estatus** | Badge que refleja la etapa actual del expediente (ver tabla de estatus más adelante). |
+| **Nivel de Riesgo** | Badge que clasifica el riesgo patrimonial detectado (ver tabla de niveles más adelante). |
+| **Periodos Comparados** | Los años de las declaraciones analizadas, p. ej. `2022 vs 2023`. |
+| **Acciones** | Botón **Abrir Expediente** (ícono de carpeta) que navega a `/revisiones/{id}`. |
+
+## Búsqueda y filtrado
+
+La barra de búsqueda en la esquina superior derecha filtra los expedientes en tiempo real mientras escribes. El filtro se aplica simultáneamente sobre los siguientes campos:
+
+- Expediente ID (p. ej. `REV-001`)
+- Nombre del servidor público
+- RFC del servidor público
+- Valor del estatus (p. ej. `EN_PROCESO`)
+
+No es necesario presionar Enter; la tabla se actualiza en cada pulsación de teclado. Si ningún expediente coincide con la búsqueda, la tabla muestra el mensaje "No se encontraron expedientes que coincidan con la búsqueda."
+
+## Ordenamiento
+
+Haz clic en cualquier encabezado de columna para ordenar la tabla. El primer clic ordena de forma ascendente; el segundo clic invierte el orden a descendente. La columna activa muestra una flecha de dirección en color de marca (`#713972`). Las columnas sin orden activo muestran el ícono `↕` en gris.
+
+Todas las columnas son ordenables: **Expediente**, **Servidor Público**, **Estatus**, **Nivel de Riesgo** y **Periodos Comparados**.
+
+## Estatus de expedientes
+
+Los expedientes pueden encontrarse en cinco estados distintos definidos en el tipo `Revision`:
+
+| Estatus | Badge | Significado |
+|---|---|---|
+| `EN_PROCESO` | Azul (`info`) | La revisión está en curso. El auditor está trabajando activamente en el análisis. |
+| `OBSERVACIONES` | Naranja (`warning`) | El expediente tiene observaciones formales registradas que requieren seguimiento. |
+| `SIN_OBSERVACIONES` | Gris (`default`) | La revisión fue completada sin hallazgos relevantes. |
+| `INCONSISTENCIAS` | Gris (`default`) | Se detectaron inconsistencias en la información declarada que no alcanzan nivel de observación formal. |
+| `CERRADA` | Verde (`success`) | El caso fue cerrado formalmente. El expediente queda inhabilitado para futuras modificaciones. |
+
+## Niveles de riesgo
+
+El nivel de riesgo se asigna manualmente desde el detalle del expediente tras el análisis del auditor, o se precalcula al guardar la comparación:
+
+| Nivel | Badge | Descripción |
+|---|---|---|
+| `BAJO` | Gris (`default`) | Sin indicios de incongruencia patrimonial significativa. |
+| `MEDIO` | Gris (`default`) | Variaciones menores que ameritan documentación pero no representan una alerta crítica. |
+| `ALTO` | Rojo (`danger`) | Incremento patrimonial relevante que supera parámetros de ingreso declarado. Requiere revisión detallada. |
+| `CRITICO` | Rojo (`danger`) | Incongruencia severa con múltiples activos de valor elevado sin justificación. Prioridad máxima. |
+
+Los niveles `ALTO` y `CRITICO` utilizan el badge `danger` (rojo) para destacarlos visualmente en la tabla y en el dashboard.
+
+## Detalle del expediente
+
+Al abrir un expediente desde la tabla, el auditor accede a una vista de detalle (`/revisiones/{id}`) que incluye:
+
+- **Información del caso** — Nombre, RFC, periodos comparados y enlace a la comparación activa.
+- **Formulario Técnica de Observaciones** — Campo de texto para observaciones generales y conclusión propuesta.
+- **Evidencias y adjuntos** — Zona de arrastre para subir documentos de sustento en PDF, XLSX o DOCX.
+- **Clasificación de Riesgo** — Selector de radio para asignar el nivel BAJO, MEDIO o ALTO.
+- **Cambiar Estatus** — Menú desplegable para mover el expediente entre estados.
+- **Cerrar Revisión Formalmente** — Botón verde que cierra el caso de forma definitiva e inhabilita el expediente para modificaciones.
+- **Generar Reporte PDF** — Exporta un reporte del expediente en formato PDF.

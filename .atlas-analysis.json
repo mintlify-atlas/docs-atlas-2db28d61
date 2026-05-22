@@ -1,0 +1,86 @@
+{
+  "projectType": "saas",
+  "projectName": "Evolución Patrimonial",
+  "projectDescription": "A Next.js web platform for Mexican government auditors to search, compare, and analyze public servants' patrimonial declarations, detect asset incongruences, and manage audit case files.",
+  "theme": "almond",
+  "primaryColor": "#5c646c",
+  "lightColor": "#cce1ef",
+  "darkColor": "#22272d",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "authentication"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/dashboard",
+              "features/search-declarations",
+              "features/patrimonial-comparison",
+              "features/revisions"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "admin/overview",
+              "admin/data-sources",
+              "admin/audit-log"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "Data Models",
+            "pages": [
+              "reference/data-models",
+              "reference/declaration-types",
+              "reference/risk-levels"
+            ]
+          },
+          {
+            "group": "Roles & Permissions",
+            "pages": [
+              "reference/user-roles",
+              "reference/access-control"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Patrimonial declaration search across multiple government data sources",
+    "Side-by-side comparison of declarations across fiscal years",
+    "Automated patrimonial congruence analysis with risk alerts",
+    "Audit case file (Revisión) management with risk classification",
+    "Admin dashboard with data source connection management",
+    "Immutable audit log (Bitácora) for system traceability",
+    "Role-based access for Auditors, Administrators, and OIC Chiefs",
+    "Risk distribution visualization with interactive charts"
+  ],
+  "publicApiSurface": [
+    "GET /declaraciones/buscar — Search patrimonial declarations by RFC, name, institution, period",
+    "GET /declaraciones/:id — View full declaration details",
+    "GET /comparacion — Compare two declarations for a public servant",
+    "GET /revisiones — List all audit case files",
+    "GET /revisiones/:id — View a specific audit case file",
+    "GET /fuentes — List configured external data sources",
+    "POST /fuentes — Add a new external data source",
+    "PUT /fuentes/:id — Update an existing data source",
+    "DELETE /fuentes/:id — Remove a data source",
+    "GET /bitacora — View system action log",
+    "GET /admin/dashboard — Administrative overview"
+  ]
+}

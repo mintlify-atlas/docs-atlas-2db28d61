@@ -1,0 +1,81 @@
+---
+title: "Niveles de riesgo: BAJO, MEDIO, ALTO y CRITICO en revisiones"
+description: "Cómo Evolución Patrimonial clasifica los expedientes de auditoría en cuatro niveles de riesgo según la magnitud de la incongruencia patrimonial detectada."
+---
+
+Every `Revision` record carries a `nivelRiesgo` field that classifies the audit case according to the severity of patrimonial incongruence detected between the compared declarations. The four levels — `BAJO`, `MEDIO`, `ALTO`, and `CRITICO` — help auditors triage their workload: low-risk cases can follow a routine review schedule, while high-risk and critical cases require immediate attention and escalation. The risk level is visible throughout the platform in the Mis Revisiones table, the Dashboard del Auditor, and the individual expediente view.
+
+<AccordionGroup>
+  <Accordion title="BAJO — riesgo bajo">
+    **Minor or no patrimonial differences detected.**
+
+    The servant's declared assets and income are broadly consistent across the compared periods. Any new acquisitions are proportionate to declared income, and no unexplained wealth has been identified.
+
+    - No significant changes in real-estate holdings or vehicles
+    - Income figures are stable or show expected variation
+    - Routine review process applies — no expedited action required
+    - Example: a servant declares the same Casa acquired years earlier, stable salary, no new assets
+  </Accordion>
+
+  <Accordion title="MEDIO — riesgo medio">
+    **Moderate differences; findings require closer examination.**
+
+    Some new assets have appeared between the base and recent periods, but they are at least partially explainable by declared income or other legitimate factors. The incongruence warrants documentation and follow-up, but does not yet require escalation.
+
+    - One or two new assets detected whose acquisition values are within a plausible range given the declared income
+    - A notable increase in `otrosIngresosMensuales` without a clearly identified source
+    - May require the auditor to request supporting documentation (comprobantes, contratos)
+  </Accordion>
+
+  <Accordion title="ALTO — riesgo alto">
+    **Significant incongruence; expedite review.**
+
+    New asset values substantially exceed what the servant's declared annual income could plausibly support. The gap between income and new acquisitions is large enough that a straightforward explanation is unlikely without additional evidence.
+
+    - New real-estate or vehicle acquisitions whose combined value significantly exceeds annual `ingresoMensualNeto × 12`
+    - Cash purchases (`formaAdquisicion: "Contado"`) of high-value assets
+    - Example (from `mock/data.ts`): REV-001 — a departamento acquired for MXN 2,500,000 cash plus a new SUV valued at MXN 650,000 against a net monthly income of MXN 73,000
+    - Requires expedited review and detailed documentation of findings
+  </Accordion>
+
+  <Accordion title="CRITICO — riesgo crítico">
+    **Severe incongruence or multiple red flags; immediate escalation recommended.**
+
+    The revision presents severe patrimonial incongruence, multiple simultaneous unexplained acquisitions, or other indicators that cannot be attributed to legitimate income sources. This level signals potential illicit enrichment and requires the fastest possible response.
+
+    - Extremely high unexplained patrimonial increase across multiple asset categories
+    - Multiple high-value cash acquisitions in a single fiscal year
+    - Inconsistencies across several declaration fields suggesting deliberate underreporting
+    - **Immediate escalation to the OIC Chief (Titular del OIC) is recommended**
+    - The revision `estatus` should be moved to `INCONSISTENCIAS` and formal proceedings documented
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Distribución de riesgo en el dashboard
+
+The **Dashboard del Auditor** (`/dashboard`) includes a donut chart titled "Distribución de Riesgo Global" that shows the count of all revisions broken down by risk level. This gives the auditor an at-a-glance view of the overall risk landscape across their assigned caseload.
+
+The chart uses the following color scheme, sourced directly from `dashboard/page.tsx`:
+
+| Nivel de riesgo | Color | Hex |
+|---|---|---|
+| Bajo | Green | `#22c55e` |
+| Medio | Yellow | `#eab308` |
+| Alto | Orange | `#f97316` |
+| Crítico | Red | `#ef4444` |
+
+The same color coding is reflected in the `Badge` components used in the Mis Revisiones table — `ALTO` and `CRITICO` cases render with the `danger` badge variant to draw immediate visual attention.
+
+---
+
+## Cómo se asigna el riesgo
+
+Risk levels are **set manually by the auditor** when creating or updating a revision. The platform does not automatically calculate a risk score. Instead, the auditor uses the congruence analysis panel — which surfaces income-to-asset comparisons, new acquisitions, and income variations — as the basis for their professional judgment when selecting the appropriate `nivelRiesgo` value.
+
+The risk level can be updated at any point during the review lifecycle. It is common to start a revision at `MEDIO` and escalate to `ALTO` or `CRITICO` after reviewing supporting documentation.
+
+<Tip>
+  Use the search and sort controls in **Mis Revisiones** (`/revisiones`) to filter by `nivelRiesgo` and sort your list so that `CRITICO` and `ALTO` cases appear first. This ensures your most urgent expedientes are never buried beneath a large volume of routine low-risk reviews.
+</Tip>

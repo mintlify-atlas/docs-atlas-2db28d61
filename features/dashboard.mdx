@@ -1,0 +1,72 @@
+---
+title: "Dashboard del Auditor: vista general de revisiones"
+description: "El Dashboard del Auditor muestra tus KPIs de revisiones activas, expedientes en proceso y la distribución de riesgo patrimonial de tu cartera."
+---
+
+El Dashboard del Auditor es la vista de aterrizaje tras iniciar sesión. Presenta un panorama consolidado de todo el trabajo de auditoría activo asignado al auditor en sesión: contadores de expedientes, la tabla de revisiones más recientes y la distribución gráfica de riesgos de toda la cartera.
+
+<Note>
+Los datos mostrados en el dashboard se refrescan a partir de todas las revisiones asignadas al auditor que ha iniciado sesión. Cada contador y cada fila de la tabla refleja únicamente los expedientes en tu cartera.
+</Note>
+
+## Indicadores clave (KPIs)
+
+Al ingresar verás cuatro tarjetas de resumen en la parte superior de la pantalla. Cada una representa un estado distinto del conjunto de revisiones.
+
+<CardGroup cols={4}>
+  <Card title="En Proceso" icon="clock" href="/features/revisions">
+    Revisiones actualmente en curso. Se muestran en azul. En el mock de ejemplo el valor inicial es 12 expedientes.
+  </Card>
+  <Card title="Con Observaciones" icon="triangle-alert" href="/features/revisions">
+    Expedientes donde el auditor ya registró observaciones formales. Indicador naranja.
+  </Card>
+  <Card title="Riesgo Crítico" icon="shield-alert" href="/features/revisions">
+    Expedientes clasificados con nivel de riesgo CRITICO. Indicador rojo. Requieren atención inmediata.
+  </Card>
+  <Card title="Cerradas" icon="circle-check" href="/features/revisions">
+    Revisiones concluidas formalmente. Indicador verde. No admiten modificaciones adicionales.
+  </Card>
+</CardGroup>
+
+Los valores se derivan en tiempo real del conjunto de objetos `Revision` asignados al auditor; no son cifras estáticas.
+
+## Revisiones recientes
+
+Debajo de los KPIs se muestra la tabla **Revisiones Recientes**, que lista los últimos expedientes creados o modificados. Cada fila contiene las siguientes columnas:
+
+| Columna | Descripción |
+|---|---|
+| **Expediente** | Identificador único del expediente (p. ej. `REV-001`). |
+| **Servidor Público** | Nombre completo del servidor público auditado, con su RFC en gris debajo. |
+| **Estatus** | Badge de color que refleja el estado del expediente: `success` para CERRADA, `warning` para los demás. |
+| **Nivel de Riesgo** | Badge `danger` para ALTO o CRITICO; `default` para BAJO y MEDIO. |
+| **Periodos** | Los años de las declaraciones comparadas, mostrados como `2022 vs 2023`. |
+| **Acción** | Ícono de ojo para abrir el expediente completo en `/revisiones/{id}`. |
+
+Usa el botón **Ver Todas** en la esquina superior derecha de la tarjeta para navegar a la lista completa de expedientes en `/revisiones`.
+
+## Distribución de riesgo global
+
+La sección inferior del dashboard muestra una **gráfica de dona** (donut chart) que clasifica todos los expedientes de la cartera según su nivel de riesgo patrimonial:
+
+| Nivel | Color |
+|---|---|
+| Bajo | Verde (`#22c55e`) |
+| Medio | Amarillo (`#eab308`) |
+| Alto | Naranja (`#f97316`) |
+| Crítico | Rojo (`#ef4444`) |
+
+Al pasar el cursor sobre cada segmento aparece un tooltip con el conteo exacto de expedientes en ese nivel. La leyenda debajo del gráfico identifica cada categoría con un círculo de color.
+
+## Acciones rápidas
+
+En la parte superior derecha del dashboard se ubican dos botones de acceso directo para las operaciones más frecuentes:
+
+<CardGroup cols={2}>
+  <Card title="Buscar Declaración" icon="search" href="/features/search-declarations">
+    Navega al módulo de búsqueda de declaraciones patrimoniales. Permite consultar por nombre, RFC o CURP en todas las fuentes de datos conectadas.
+  </Card>
+  <Card title="Nueva Comparación" icon="git-compare" href="/features/patrimonial-comparison">
+    Abre directamente el módulo de comparación lado a lado para iniciar un análisis de evolución patrimonial entre dos periodos.
+  </Card>
+</CardGroup>

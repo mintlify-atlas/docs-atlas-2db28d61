@@ -1,0 +1,57 @@
+---
+title: "Inicio de sesión y control de acceso basado en rol"
+description: "Cómo iniciar sesión con tus credenciales RFC, qué módulos puede ver cada rol (AUDITOR, ADMIN, OIC_CHIEF) y cómo se adapta la navegación por rol."
+---
+
+Evolución Patrimonial utiliza autenticación basada en RFC institucional. Cada cuenta tiene un rol asignado — AUDITOR, ADMIN u OIC_CHIEF — que determina a qué módulos y funcionalidades puede acceder el usuario. La plataforma controla la visibilidad de la navegación de forma automática según el rol de la sesión activa.
+
+## Inicio de sesión
+
+Para acceder a la plataforma, ve a la página de inicio de sesión y completa el formulario:
+
+| Campo              | Descripción                                                                 |
+| ------------------ | --------------------------------------------------------------------------- |
+| **Usuario (RFC)**  | Tu Registro Federal de Contribuyentes institucional. Ejemplo: `LOA800101XYZ`. |
+| **Contraseña**     | Contraseña asignada por el administrador del sistema.                        |
+
+Después de completar los campos:
+
+- Activa la casilla **Recordar sesión** si deseas que el sistema recuerde tus credenciales en el navegador.
+- Haz clic en **Acceder al Sistema** para iniciar la verificación.
+
+Si las credenciales son válidas, el sistema te redirige automáticamente al **Dashboard del Auditor**.
+
+<Note>
+  En el MVP, la autenticación es simulada. El formulario acepta cualquier combinación de credenciales y redirige directamente al dashboard sin validación real. La integración con proveedores de identidad institucionales (por ejemplo, LDAP corporativo u OAuth federado) está planificada para el despliegue en producción.
+</Note>
+
+<Warning>
+  No compartas tus credenciales de acceso. La plataforma contiene información patrimonial sensible de servidores públicos. El acceso no autorizado puede tener consecuencias legales y administrativas.
+</Warning>
+
+## Roles de acceso
+
+La plataforma define tres roles de usuario con distintos niveles de acceso:
+
+| Rol          | Descripción                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| **AUDITOR**  | Acceso al Dashboard del Auditor, Buscar Declaraciones, Comparación Patrimonial y Mis Revisiones.                   |
+| **ADMIN**    | Todas las capacidades de AUDITOR más acceso al Dashboard Admin, configuración de Fuentes de Datos y consulta de la Bitácora del sistema. |
+| **OIC_CHIEF**| Rol de supervisión con acceso completo a todos los módulos. Diseñado para el Jefe del Órgano Interno de Control.   |
+
+## Navegación por rol
+
+La barra lateral muestra u oculta elementos según el rol de la sesión activa. Los elementos marcados como `adminOnly` en la configuración de navegación solo son visibles para cuentas con rol **ADMIN**:
+
+**Visible para todos los roles:**
+- Dashboard Auditor
+- Buscar Declaraciones
+- Comparar
+- Mis Revisiones
+
+**Solo visible para ADMIN:**
+- Dashboard Admin
+- Fuentes de Datos
+- Bitácora
+
+Si accedes con un rol AUDITOR u OIC_CHIEF, los tres módulos de administración no aparecerán en la barra lateral. Para solicitar acceso a funciones administrativas, contacta al administrador del sistema de tu institución.

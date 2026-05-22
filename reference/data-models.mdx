@@ -1,0 +1,437 @@
+---
+title: "TypeScript data models reference for Evolución Patrimonial"
+description: "Complete TypeScript interface reference for all data structures used in Evolución Patrimonial, including declarations, revisions, data sources, and audit logs."
+---
+
+All data in the platform is typed with TypeScript interfaces defined in `types/index.ts`. Every object exchanged between components, consumed from the mock layer, or persisted to external sources conforms to one of these interfaces. This reference documents every field across all interfaces so auditors, developers, and integrators share a common vocabulary.
+
+## Declaracion
+
+The root object representing a single patrimonial declaration. It groups metadata (identity and provenance) with the full patrimonial snapshot.
+
+```typescript
+interface Declaracion {
+  metadata: DeclaracionMetadata;
+  situacionPatrimonial: SituacionPatrimonial;
+}
+```
+
+<ResponseField name="metadata" type="DeclaracionMetadata" required>
+  Identity and provenance information for the declaration. See [DeclaracionMetadata](#declaracionmetadata) below.
+</ResponseField>
+
+<ResponseField name="situacionPatrimonial" type="SituacionPatrimonial" required>
+  Full patrimonial snapshot at the time of filing. See [SituacionPatrimonial](#situacionpatrimonial) below.
+</ResponseField>
+
+---
+
+## DeclaracionMetadata
+
+Describes the identity, origin, and availability status of a declaration. Used throughout search results, comparison selectors, and revision records.
+
+```typescript
+interface DeclaracionMetadata {
+  id: string;
+  rfc: string;
+  nombreCompleto: string;
+  institucion: string;
+  ejercicio: number;
+  tipoDeclaracion: 'INICIAL' | 'MODIFICACION' | 'CONCLUSION';
+  fuente: string;
+  fechaActualizacion: string;
+  estatusDisponibilidad: 'COMPLETA' | 'PARCIAL' | 'NO_DISPONIBLE';
+}
+```
+
+<ResponseField name="id" type="string" required>
+  Unique declaration identifier. Convention: `D-{year}-{sequence}`, e.g. `"D-2022-001"`.
+</ResponseField>
+
+<ResponseField name="rfc" type="string" required>
+  RFC (Registro Federal de Contribuyentes) of the public servant, e.g. `"ROBJ800101XYZ"`.
+</ResponseField>
+
+<ResponseField name="nombreCompleto" type="string" required>
+  Full name of the public servant as it appears in the source system, e.g. `"Juan Roberto Robles"`.
+</ResponseField>
+
+<ResponseField name="institucion" type="string" required>
+  Name of the public institution where the servant holds their position, e.g. `"Secretaría de Finanzas"`.
+</ResponseField>
+
+<ResponseField name="ejercicio" type="number" required>
+  Fiscal year to which the declaration corresponds, e.g. `2022`.
+</ResponseField>
+
+<ResponseField name="tipoDeclaracion" type="'INICIAL' | 'MODIFICACION' | 'CONCLUSION'" required>
+  Declaration type. See [Declaration types](/reference/declaration-types) for the significance of each value.
+</ResponseField>
+
+<ResponseField name="fuente" type="string" required>
+  Human-readable name of the data source that provided this declaration, e.g. `"SFP API Nacional"`. Corresponds to `FuenteDatos.nombre`.
+</ResponseField>
+
+<ResponseField name="fechaActualizacion" type="string" required>
+  ISO 8601 datetime of the last update from the source system, e.g. `"2022-05-15T10:00:00Z"`.
+</ResponseField>
+
+<ResponseField name="estatusDisponibilidad" type="'COMPLETA' | 'PARCIAL' | 'NO_DISPONIBLE'" required>
+  Data completeness status as reported by the source. `COMPLETA` means all sections are available; `PARCIAL` means one or more sections are missing; `NO_DISPONIBLE` means the declaration cannot be retrieved.
+</ResponseField>
+
+---
+
+## SituacionPatrimonial
+
+The complete patrimonial snapshot of a public servant at the time of filing. All top-level fields are optional because data availability depends on the source system.
+
+```typescript
+interface SituacionPatrimonial {
+  datosGenerales?: { nombre, primerApellido, segundoApellido, rfc };
+  ingresos?: Ingresos;
+  bienesInmuebles?: { ninguno: boolean; bienes: BienInmueble[] };
+  vehiculos?: { ninguno: boolean; vehiculos: Vehiculo[] };
+}
+```
+
+<ResponseField name="datosGenerales" type="object">
+  Identity data as stored in the patrimonial section (may differ from `metadata` fields if the source system stores them independently).
+
+  <Expandable title="datosGenerales fields">
+    <ResponseField name="nombre" type="string" required>
+      Given name(s) of the public servant.
+    </ResponseField>
+    <ResponseField name="primerApellido" type="string" required>
+      First (paternal) surname.
+    </ResponseField>
+    <ResponseField name="segundoApellido" type="string" required>
+      Second (maternal) surname. May be an empty string if not applicable.
+    </ResponseField>
+    <ResponseField name="rfc" type="string" required>
+      RFC as stored in the patrimonial section.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="ingresos" type="Ingresos">
+  Monthly income breakdown. See [Ingresos](#ingresos) below.
+</ResponseField>
+
+<ResponseField name="bienesInmuebles" type="object">
+  Real-estate holdings declared during this period.
+
+  <Expandable title="bienesInmuebles fields">
+    <ResponseField name="ninguno" type="boolean" required>
+      `true` when the servant explicitly declared no real-estate holdings.
+    </ResponseField>
+    <ResponseField name="bienes" type="BienInmueble[]" required>
+      Array of individual real-estate assets. See [BienInmueble](#bieninmueble) below. Empty array when `ninguno` is `true`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="vehiculos" type="object">
+  Vehicle holdings declared during this period.
+
+  <Expandable title="vehiculos fields">
+    <ResponseField name="ninguno" type="boolean" required>
+      `true` when the servant explicitly declared no vehicles.
+    </ResponseField>
+    <ResponseField name="vehiculos" type="Vehiculo[]" required>
+      Array of individual vehicles. See [Vehiculo](#vehiculo) below. Empty array when `ninguno` is `true`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+---
+
+## Ingresos
+
+Monthly income figures declared by the public servant. Used by the congruence analysis panel to assess whether new asset acquisitions are consistent with reported income.
+
+```typescript
+interface Ingresos {
+  remuneracionMensualNeta: number;
+  otrosIngresosMensuales: number;
+  ingresoMensualNeto: number;
+  ninguno: boolean;
+}
+```
+
+<ResponseField name="remuneracionMensualNeta" type="number" required>
+  Net monthly salary from the public position, in Mexican pesos, e.g. `45000`.
+</ResponseField>
+
+<ResponseField name="otrosIngresosMensuales" type="number" required>
+  Other monthly income (honoraria, rental income, etc.), in Mexican pesos, e.g. `25000`.
+</ResponseField>
+
+<ResponseField name="ingresoMensualNeto" type="number" required>
+  Sum of all net monthly income. Should equal `remuneracionMensualNeta + otrosIngresosMensuales`, e.g. `73000`.
+</ResponseField>
+
+<ResponseField name="ninguno" type="boolean" required>
+  `true` when the servant explicitly declared zero income. Typically `false` for active public servants.
+</ResponseField>
+
+---
+
+## BienInmueble
+
+A single real-estate asset within the `bienesInmuebles.bienes` array.
+
+```typescript
+interface BienInmueble {
+  idRegistro: string;
+  tipoInmueble: string;
+  valorAdquisicion: number;
+  formaAdquisicion: string;
+  fechaAdquisicion: string;
+}
+```
+
+<ResponseField name="idRegistro" type="string" required>
+  Unique registry ID for this asset within the declaration, e.g. `"INM-1"`.
+</ResponseField>
+
+<ResponseField name="tipoInmueble" type="string" required>
+  Property type as reported by the source, e.g. `"Casa"`, `"Departamento"`, `"Terreno"`.
+</ResponseField>
+
+<ResponseField name="valorAdquisicion" type="number" required>
+  Acquisition value in Mexican pesos at the time of purchase, e.g. `2500000`.
+</ResponseField>
+
+<ResponseField name="formaAdquisicion" type="string" required>
+  Method of acquisition, e.g. `"Crédito"`, `"Contado"`, `"Herencia"`.
+</ResponseField>
+
+<ResponseField name="fechaAdquisicion" type="string" required>
+  Date of acquisition in `YYYY-MM-DD` format, e.g. `"2023-02-10"`.
+</ResponseField>
+
+---
+
+## Vehiculo
+
+A single vehicle within the `vehiculos.vehiculos` array.
+
+```typescript
+interface Vehiculo {
+  idRegistro: string;
+  tipoVehiculo: string;
+  marca: string;
+  modelo: string;
+  anio: number;
+  valorAdquisicion: number;
+}
+```
+
+<ResponseField name="idRegistro" type="string" required>
+  Unique registry ID for this vehicle within the declaration, e.g. `"VEH-1"`.
+</ResponseField>
+
+<ResponseField name="tipoVehiculo" type="string" required>
+  Vehicle category as reported by the source, e.g. `"SUV"`, `"Sedán"`, `"Motocicleta"`.
+</ResponseField>
+
+<ResponseField name="marca" type="string" required>
+  Manufacturer brand, e.g. `"Honda"`.
+</ResponseField>
+
+<ResponseField name="modelo" type="string" required>
+  Model name, e.g. `"CR-V"`.
+</ResponseField>
+
+<ResponseField name="anio" type="number" required>
+  Model year, e.g. `2023`.
+</ResponseField>
+
+<ResponseField name="valorAdquisicion" type="number" required>
+  Acquisition value in Mexican pesos, e.g. `650000`.
+</ResponseField>
+
+---
+
+## Revision
+
+An audit revision (expediente) created by an auditor to document a comparison and record findings. Each revision references one or more `Declaracion` IDs.
+
+```typescript
+interface Revision {
+  id: string;
+  rfcServidorPublico: string;
+  nombreServidorPublico: string;
+  declaracionesComparadas: string[];
+  estatus: 'EN_PROCESO' | 'OBSERVACIONES' | 'SIN_OBSERVACIONES' | 'INCONSISTENCIAS' | 'CERRADA';
+  nivelRiesgo: 'BAJO' | 'MEDIO' | 'ALTO' | 'CRITICO';
+  etiquetas: string[];
+  observacionesGenerales: string;
+  fechaCreacion: string;
+  fechaActualizacion: string;
+  auditorAsignado: string;
+}
+```
+
+<ResponseField name="id" type="string" required>
+  Unique revision identifier. Convention: `REV-{sequence}`, e.g. `"REV-001"`.
+</ResponseField>
+
+<ResponseField name="rfcServidorPublico" type="string" required>
+  RFC of the public servant under review, e.g. `"ROBJ800101XYZ"`.
+</ResponseField>
+
+<ResponseField name="nombreServidorPublico" type="string" required>
+  Full name of the public servant under review, e.g. `"Juan Roberto Robles"`.
+</ResponseField>
+
+<ResponseField name="declaracionesComparadas" type="string[]" required>
+  Array of `DeclaracionMetadata.id` values included in this revision, e.g. `["D-2022-001", "D-2023-001"]`. Typically two declarations (base period vs. recent period).
+</ResponseField>
+
+<ResponseField name="estatus" type="'EN_PROCESO' | 'OBSERVACIONES' | 'SIN_OBSERVACIONES' | 'INCONSISTENCIAS' | 'CERRADA'" required>
+  Current workflow status of the revision:
+  - `EN_PROCESO` — actively being reviewed
+  - `OBSERVACIONES` — findings noted, pending resolution
+  - `SIN_OBSERVACIONES` — review complete, no issues found
+  - `INCONSISTENCIAS` — confirmed discrepancies requiring action
+  - `CERRADA` — revision finalized and archived
+</ResponseField>
+
+<ResponseField name="nivelRiesgo" type="'BAJO' | 'MEDIO' | 'ALTO' | 'CRITICO'" required>
+  Risk classification assigned by the auditor. See [Risk levels](/reference/risk-levels) for full definitions.
+</ResponseField>
+
+<ResponseField name="etiquetas" type="string[]" required>
+  Free-form tags applied by the auditor for categorization, e.g. `["Incremento patrimonial", "Bienes"]`. Empty array when no tags have been assigned.
+</ResponseField>
+
+<ResponseField name="observacionesGenerales" type="string" required>
+  Free-text narrative of findings and observations written by the auditor.
+</ResponseField>
+
+<ResponseField name="fechaCreacion" type="string" required>
+  ISO 8601 datetime when the revision was first created, e.g. `"2023-06-01T09:00:00Z"`.
+</ResponseField>
+
+<ResponseField name="fechaActualizacion" type="string" required>
+  ISO 8601 datetime of the most recent update to the revision, e.g. `"2023-06-02T16:30:00Z"`.
+</ResponseField>
+
+<ResponseField name="auditorAsignado" type="string" required>
+  Name or identifier of the auditor responsible for this revision, e.g. `"Ana López"`.
+</ResponseField>
+
+---
+
+## FuenteDatos
+
+Represents a configured external data source from which declarations are ingested.
+
+```typescript
+interface FuenteDatos {
+  id: string;
+  nombre: string;
+  urlBase: string;
+  estado: 'ACTIVA' | 'INACTIVA';
+  ultimaSincronizacion: string;
+}
+```
+
+<ResponseField name="id" type="string" required>
+  Unique data source identifier, e.g. `"F-1"`.
+</ResponseField>
+
+<ResponseField name="nombre" type="string" required>
+  Human-readable name of the data source, e.g. `"SFP Declaranet Nacional"`.
+</ResponseField>
+
+<ResponseField name="urlBase" type="string" required>
+  Base URL of the source API, e.g. `"https://api.declaranet.gob.mx/v1"`.
+</ResponseField>
+
+<ResponseField name="estado" type="'ACTIVA' | 'INACTIVA'" required>
+  Connection status. `ACTIVA` means the source is reachable and synchronizing; `INACTIVA` means it has been disabled or is unreachable.
+</ResponseField>
+
+<ResponseField name="ultimaSincronizacion" type="string" required>
+  ISO 8601 datetime of the last successful data sync, e.g. `"2023-10-24T18:00:00Z"`.
+</ResponseField>
+
+---
+
+## BitacoraAccion
+
+A single audit log entry recording a user action in the platform. Used in the Bitácora module, accessible to administrators only.
+
+```typescript
+interface BitacoraAccion {
+  id: string;
+  usuario: string;
+  accion: string;
+  modulo: string;
+  entidadAfectada: string;
+  fecha: string;
+  resultado: 'EXITO' | 'ERROR';
+}
+```
+
+<ResponseField name="id" type="string" required>
+  Unique log entry identifier. Convention: `LOG-{sequence}`, e.g. `"LOG-100"`.
+</ResponseField>
+
+<ResponseField name="usuario" type="string" required>
+  Name or identifier of the user who performed the action, e.g. `"Ana López"`.
+</ResponseField>
+
+<ResponseField name="accion" type="string" required>
+  Description of the action performed, e.g. `"Comparación Generada"`, `"Prueba de Conexión"`.
+</ResponseField>
+
+<ResponseField name="modulo" type="string" required>
+  Platform module where the action took place, e.g. `"Comparación"`, `"Fuentes de Datos"`.
+</ResponseField>
+
+<ResponseField name="entidadAfectada" type="string" required>
+  The entity (RFC, data source name, revision ID, etc.) that was affected by the action, e.g. `"ROBJ800101XYZ"`.
+</ResponseField>
+
+<ResponseField name="fecha" type="string" required>
+  ISO 8601 datetime when the action occurred, e.g. `"2023-10-24T09:15:00Z"`.
+</ResponseField>
+
+<ResponseField name="resultado" type="'EXITO' | 'ERROR'" required>
+  Outcome of the action. `EXITO` means it completed successfully; `ERROR` means it failed.
+</ResponseField>
+
+---
+
+## User
+
+Represents an authenticated platform user. Used to determine role-based access and display the current user in the sidebar.
+
+```typescript
+interface User {
+  id: string;
+  name: string;
+  role: 'AUDITOR' | 'ADMIN' | 'OIC_CHIEF';
+  email: string;
+}
+```
+
+<ResponseField name="id" type="string" required>
+  Unique user identifier, e.g. `"u1"`.
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+  Display name of the user, e.g. `"Ana López (Auditora)"`.
+</ResponseField>
+
+<ResponseField name="role" type="'AUDITOR' | 'ADMIN' | 'OIC_CHIEF'" required>
+  Role that controls module visibility and access. See [User roles](/reference/user-roles) for full definitions.
+</ResponseField>
+
+<ResponseField name="email" type="string" required>
+  Institutional email address, e.g. `"ana.lopez@oic.gob.mx"`.
+</ResponseField>

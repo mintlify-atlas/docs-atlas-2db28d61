@@ -1,0 +1,90 @@
+---
+title: "Compare patrimonial declarations across fiscal years"
+description: "The Comparación module performs a side-by-side analysis of two declarations, calculates patrimonial congruence, and highlights new assets with risk alerts."
+---
+
+El módulo de **Comparación** (`/comparacion`) es la herramienta analítica central de la plataforma. Detecta bienes raíces, vehículos y otros activos adquiridos entre dos periodos fiscales, y evalúa si el valor de esas adquisiciones es proporcional a los ingresos netos declarados. A partir de esa evaluación genera un veredicto automático de congruencia o incongruencia patrimonial que sirve como punto de partida para la auditoría.
+
+<Warning>
+El análisis de congruencia es un indicador heurístico, no un hallazgo de auditoría definitivo. Siempre revisa el detalle completo de la declaración y los documentos de sustento antes de emitir conclusiones formales.
+</Warning>
+
+## Seleccionar servidor público y periodos
+
+Antes de ejecutar el análisis debes configurar tres selectores en la parte superior del módulo:
+
+<Steps>
+  <Step title="Servidor Público">
+    Menú desplegable con el RFC y nombre del servidor público a analizar (p. ej. `Juan Roberto Robles (ROBJ800101XYZ)`). En producción se poblará desde la API con todos los servidores disponibles.
+  </Step>
+  <Step title="Periodo Base">
+    La declaración más antigua del par a comparar. Actúa como línea base patrimonial. Ejemplo: `2022 - MODIFICACION (SFP API Nacional)`.
+  </Step>
+  <Step title="Periodo Reciente (Comparar)">
+    La declaración más reciente que se comparará contra la base. Los activos que aparezcan aquí y no estén en la base se marcan como nuevos. Ejemplo: `2023 - MODIFICACION (SFP API Nacional)`.
+  </Step>
+</Steps>
+
+## Panel de congruencia patrimonial
+
+Debajo de los selectores aparece un panel de resumen que presenta el veredicto automático de la heurística de congruencia. El panel es verde cuando el incremento es justificable y rojo cuando se detecta una posible incongruencia.
+
+<Tabs>
+  <Tab title="Congruente (verde)">
+    Aparece cuando el valor total de los bienes nuevos es menor o igual al ingreso neto anual estimado. El encabezado muestra "Congruencia Patrimonial Detectada" con un ícono de escudo verde. Indica que el incremento patrimonial es proporcional a los ingresos reportados.
+  </Tab>
+  <Tab title="Incongruente (rojo)">
+    Aparece cuando el valor de los bienes nuevos supera el ingreso neto anual estimado. El encabezado muestra "Posible Incongruencia Patrimonial" con un ícono de alerta rojo. Se recomienda revisar el expediente a fondo.
+  </Tab>
+</Tabs>
+
+El panel siempre muestra tres métricas de apoyo:
+
+| Métrica | Descripción |
+|---|---|
+| **Ingreso Estimado (Anual)** | `ingresoMensualNeto` del Periodo Reciente multiplicado por 12. Representa la capacidad adquisitiva estimada del servidor público durante el ejercicio. |
+| **Valor Bienes Nuevos** | Suma del `valorAdquisicion` de todos los inmuebles y vehículos que aparecen en el Periodo Reciente pero no en el Periodo Base. |
+| **Nuevos Elementos** | Conteo de activos nuevos detectados (inmuebles + vehículos). |
+
+La heurística es: si `Valor Bienes Nuevos > Ingreso Estimado Anual` → incongruencia.
+
+## Paneles de comparación lado a lado
+
+El núcleo visual del módulo son dos tarjetas colocadas una junto a la otra:
+
+<Tabs>
+  <Tab title="Panel izquierdo — Periodo Base">
+    Borde gris (`ring-slate-200`). Muestra los datos del periodo más antiguo sin marcadores adicionales. Contiene cuatro secciones:
+
+    1. **Ingresos Netos** — Remuneración mensual neta, otros ingresos mensuales y total.
+    2. **Bienes Inmuebles** — Tarjetas por bien con tipo de inmueble, forma de adquisición, fecha y valor de adquisición.
+    3. **Vehículos** — Tarjetas por vehículo con tipo, marca, modelo/año y valor acumulado.
+    4. **Adeudos (Pasivos)** — Listado de adeudos reportados. Muestra "Ninguno" si no hay pasivos.
+  </Tab>
+  <Tab title="Panel derecho — Periodo Reciente">
+    Borde azul (`ring-blue-500`) con franja azul en la parte superior. Muestra los datos del periodo más reciente. Las diferencias respecto al Periodo Base se indican mediante badges de diferencia junto a cada valor monetario:
+
+    - **Incremento** → badge rojo con el monto `+MXN X,XXX`.
+    - **Decremento** → badge verde con el monto `-MXN X,XXX`.
+
+    Los activos que no existían en el Periodo Base aparecen con **fondo rojo claro** y una etiqueta roja "Nuevo" en la esquina superior derecha. El encabezado de la sección muestra "Nuevo Inmueble Detectado" o "Nuevo Vehículo Detectado" cuando corresponde.
+  </Tab>
+</Tabs>
+
+## Resumen de alertas
+
+El botón **Visualizar Resumen Alertas** en la parte superior de la página abre un modal con dos secciones:
+
+**Semáforo de Evolución Patrimonial** — Un círculo de color (verde o rojo) acompañado de una descripción textual del estado de la congruencia:
+- Verde: el incremento está dentro del rango esperado.
+- Rojo: alerta crítica, el incremento excede notablemente los ingresos anuales.
+
+**Incidencias Detectadas** — Lista de hallazgos concretos:
+- *Bienes de Nueva Adquisición* — conteo y valor estimado total de los activos nuevos.
+- *Incongruencia Ingreso-Gasto* — aparece únicamente cuando `isJustified === false`; muestra el margen de ingresos versus el valor de los nuevos bienes.
+
+Si no se detectan bienes nuevos, el modal indica "No se encontraron nuevos bienes o adquisiciones relevantes entre periodos."
+
+## Guardar como revisión
+
+Al hacer clic en **Guardar como Revisión** (esquina superior derecha, botón morado) la plataforma registra la comparación como un nuevo expediente en Mis Revisiones y redirige automáticamente al formulario de ese expediente en `/revisiones/{nuevo-id}`. Desde ahí puedes agregar observaciones, adjuntar evidencias y actualizar el estatus del caso.

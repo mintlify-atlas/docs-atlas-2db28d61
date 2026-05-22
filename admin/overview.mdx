@@ -1,0 +1,70 @@
+---
+title: "Administrative dashboard for Evolución Patrimonial"
+description: "The Admin Dashboard gives administrators a system-wide view of total revisions, critical risks, active data sources, and the latest audit log entries."
+---
+
+The Admin Dashboard is accessible exclusively to users with the `ADMIN` role. Unlike the standard auditor workbench — which scopes data to an individual auditor's assigned revisions — the administrative view aggregates information across the entire platform, providing a single pane of glass for system health, risk exposure, data source status, and recent activity.
+
+## KPIs del sistema
+
+Four key performance indicators are displayed at the top of the dashboard in a responsive card grid. Each card shows a label, a numeric value computed at render time from live data, and a color-coded icon.
+
+| Indicador | Description | Source |
+|---|---|---|
+| **Total Revisiones** | Count of all `Revision` records in the system, regardless of auditor or status. | `mockRevisiones.length` |
+| **Riesgos Críticos** | Number of revisions whose `nivelRiesgo` is either `ALTO` or `CRITICO`. | Filtered from `mockRevisiones` |
+| **Fuentes Activas** | Count of `FuenteDatos` records with `estado === 'ACTIVA'`. | Filtered from `mockFuentes` |
+| **Auditores Activos** | Number of auditor accounts currently active in the system. | Static value (4) in the current MVP |
+
+These KPIs update each time the page mounts. Future releases will add real-time refresh and trend indicators.
+
+## Tablas de resumen
+
+Below the KPI cards, two summary tables are displayed side by side on wide screens and stacked on mobile.
+
+### Últimas acciones (bitácora)
+
+Displays the **5 most recent entries** from the audit log (`mockBitacora.slice(0, 5)`).
+
+| Column | Description |
+|---|---|
+| **Usuario** | Display name of the user who performed the action. |
+| **Acción** | The action type concatenated with the module, formatted as `{accion} en {modulo}` (e.g., "Comparación Generada en Comparación"). |
+| **Resultado** | A badge with variant `success` for `EXITO` or `danger` for `ERROR`. |
+
+This table is a read-only snapshot. Click **Bitácora** in the sidebar to access the full searchable log.
+
+### Estado de fuentes de datos
+
+Shows all configured data sources and their current sync status.
+
+| Column | Description |
+|---|---|
+| **Fuente** | Name of the external API source (e.g., "SFP Declaranet Nacional"). |
+| **Estado** | A badge with variant `success` for `ACTIVA` or `danger` for `INACTIVA`. |
+| **Últ. Sincronización** | ISO timestamp of the last successful sync, rendered with `toLocaleString()`. |
+
+Inactive sources appear in this table but will not be queried during declaration searches.
+
+<Note>
+  This module is under active development. Advanced charts, per-auditor metrics, and executive reports will be added in future releases.
+</Note>
+
+## Related modules
+
+<CardGroup cols={2}>
+  <Card
+    title="Data sources"
+    icon="database"
+    href="/admin/data-sources"
+  >
+    Add, edit, test, and toggle the external API endpoints used to fetch patrimonial declarations.
+  </Card>
+  <Card
+    title="Audit log (Bitácora)"
+    icon="scroll"
+    href="/admin/audit-log"
+  >
+    Browse the immutable record of every system action with user, module, entity, and result.
+  </Card>
+</CardGroup>

@@ -1,0 +1,72 @@
+---
+title: "Declaration types: INICIAL, MODIFICACION, CONCLUSION"
+description: "Reference for the three types of patrimonial declarations in Mexico's public sector disclosure system and their significance in audit workflows."
+---
+
+Mexican law requires public servants to file three distinct types of patrimonial declarations throughout their tenure. Each declaration type captures the servant's financial and patrimonial state at a specific career moment, and each plays a different role in the audit workflow: establishing baselines, enabling year-over-year tracking, and detecting final-period accumulation. The `tipoDeclaracion` field on every `DeclaracionMetadata` object carries one of three values — `INICIAL`, `MODIFICACION`, or `CONCLUSION` — that identify which type a given record represents.
+
+<AccordionGroup>
+  <Accordion title="INICIAL — declaración de inicio de encargo">
+    Filed when a public servant **begins a new public position**. The INICIAL declaration establishes the patrimonial baseline against which all future declarations for the same encargo are compared.
+
+    **Key characteristics:**
+    - Filed within 60 days of taking office (per applicable regulations)
+    - Captures the servant's complete patrimonial state *before* the influence of the new position
+    - Serves as the reference point ("Periodo Base") in comparisons against later MODIFICACION or CONCLUSION declarations
+
+    **Typical audit use:** Compare INICIAL (base) vs. a MODIFICACION (recent) to quantify total patrimonial growth during the period of service.
+  </Accordion>
+
+  <Accordion title="MODIFICACION — declaración anual de modificación patrimonial">
+    Filed annually, typically **during the month of May** of the following fiscal year. The MODIFICACION declaration is the primary data source for continuous patrimonial monitoring and year-over-year analysis.
+
+    **Key characteristics:**
+    - Filed every year the public servant remains in their position
+    - Captures any changes in income, real-estate holdings, and vehicles since the previous declaration
+    - Identified by the `ejercicio` field (e.g. `2022`, `2023`) to disambiguate multiple MODIFICACION records for the same servant
+    - Most commonly used as the **"Periodo Reciente"** in platform comparisons
+
+    **Typical audit use:** Compare MODIFICACION year N (base) vs. MODIFICACION year N+1 (recent) to detect incremental accumulation between consecutive annual filings.
+  </Accordion>
+
+  <Accordion title="CONCLUSION — declaración de conclusión de encargo">
+    Filed when a public servant **leaves their position**, either by resignation, transfer, or end of term. The CONCLUSION declaration captures the final patrimonial state at the end of the encargo.
+
+    **Key characteristics:**
+    - Filed within 60 days of leaving office
+    - Enables detection of patrimonial changes that occurred during the final period of service — a window that a year-end MODIFICACION might not cover
+    - Often compared against the most recent MODIFICACION to assess the last stretch of service
+
+    **Typical audit use:** Compare the most recent MODIFICACION (base) vs. CONCLUSION (recent) to identify any assets acquired or income declared in the closing period of tenure.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Uso en comparaciones
+
+The Comparación module requires selecting a **Periodo Base** and a **Periodo Reciente**. The choice of declaration types shapes the scope of the analysis.
+
+| Scenario | Periodo Base | Periodo Reciente | What it reveals |
+|---|---|---|---|
+| Full-tenure analysis | INICIAL | Most recent MODIFICACION | Total patrimonial growth across the entire period of service |
+| Year-over-year | MODIFICACION año N | MODIFICACION año N+1 | Incremental changes between two consecutive annual filings |
+| Final-period review | Most recent MODIFICACION | CONCLUSION | Patrimonial changes in the closing months of the encargo |
+
+The `declaracionesComparadas` array on a `Revision` record stores the IDs of the two (or more) declarations selected for that expediente. The platform displays the corresponding `ejercicio` values side by side in the Mis Revisiones table to make the comparison window immediately visible.
+
+---
+
+## Disponibilidad
+
+Not all declarations retrieved from external sources are fully populated. The `estatusDisponibilidad` field on `DeclaracionMetadata` indicates the data quality of a specific record:
+
+| Value | Meaning |
+|---|---|
+| `COMPLETA` | All patrimonial sections (income, real estate, vehicles) are available |
+| `PARCIAL` | One or more sections are present but incomplete or missing |
+| `NO_DISPONIBLE` | The declaration could not be retrieved from the source system |
+
+<Note>
+  Declaration availability depends on the data source configuration. Some state-level systems connected through Fuentes de Datos may only provide partial data — for example, income figures may be present while real-estate holdings are absent. Always check `estatusDisponibilidad` before drawing conclusions from a comparison that includes a `PARCIAL` record.
+</Note>

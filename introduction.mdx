@@ -1,0 +1,51 @@
+---
+title: "Evolución Patrimonial: auditoría patrimonial pública"
+description: "Evolución Patrimonial centraliza la consulta y auditoría de declaraciones de bienes de servidores públicos mexicanos en una sola plataforma."
+---
+
+Evolución Patrimonial es una plataforma web diseñada para auditores y oficiales de los Órganos Internos de Control (OIC) del gobierno mexicano. Permite buscar declaraciones patrimoniales de servidores públicos, compararlas entre periodos fiscales y detectar incongruencias en el incremento del patrimonio, todo desde una interfaz centralizada. El sistema elimina la necesidad de consultar múltiples fuentes de forma manual y estandariza el flujo de revisión de expedientes de auditoría.
+
+<CardGroup cols={2}>
+  <Card title="Inicio rápido" icon="rocket" href="/quickstart">
+    Accede al sistema y realiza tu primera comparación patrimonial en menos de 5 minutos.
+  </Card>
+  <Card title="Dashboard del auditor" icon="chart-pie" href="/features/dashboard">
+    Consulta KPIs de revisiones, riesgo crítico y el estado de tus expedientes activos.
+  </Card>
+  <Card title="Comparación patrimonial" icon="scale-balanced" href="/features/patrimonial-comparison">
+    Compara dos declaraciones lado a lado y obtén un análisis automático de congruencia.
+  </Card>
+  <Card title="Mis revisiones" icon="folder-open" href="/features/revisions">
+    Gestiona y da seguimiento a todos los expedientes de evolución patrimonial abiertos.
+  </Card>
+</CardGroup>
+
+## Módulos principales
+
+La plataforma se organiza en los siguientes módulos accesibles desde la barra lateral:
+
+| Módulo                     | Descripción                                                                                       | Acceso         |
+| -------------------------- | ------------------------------------------------------------------------------------------------- | -------------- |
+| **Dashboard del Auditor**  | Vista general con KPIs (En Proceso, Con Observaciones, Riesgo Crítico, Cerradas) y revisiones recientes. | Todos           |
+| **Buscar Declaraciones**   | Consulta declaraciones por nombre, RFC o CURP; filtra por institución, periodo y tipo.            | Todos           |
+| **Comparación Patrimonial**| Análisis lado a lado de dos periodos con panel de congruencia y semáforo de riesgo.               | Todos           |
+| **Mis Revisiones**         | Lista de expedientes creados por el auditor en sesión, con filtros de estatus y riesgo.           | Todos           |
+| **Administración**         | Panel administrativo con métricas del sistema y gestión de usuarios.                              | Solo Administrador |
+| **Bitácora**               | Registro completo de acciones del sistema para trazabilidad y auditoría interna.                  | Solo Administrador |
+
+## Roles de usuario
+
+El acceso a funcionalidades varía según el rol asignado a cada cuenta:
+
+**AUDITOR**
+Rol base para el personal de auditoría. Tiene acceso al dashboard, búsqueda de declaraciones, comparación patrimonial y gestión de sus propias revisiones.
+
+**ADMIN**
+Incluye todas las capacidades del auditor y además puede acceder al panel de administración, configurar fuentes de datos externas y consultar la bitácora del sistema.
+
+**OIC_CHIEF**
+Rol de supervisión asignado al Jefe del Órgano Interno de Control. Cuenta con acceso completo a todos los módulos de la plataforma para supervisar el trabajo del equipo auditor.
+
+<Note>
+  Esta es una versión MVP que utiliza datos simulados (mock data) para demostración. Las integraciones reales con las APIs de la Secretaría de la Función Pública (SFP), el SAT y otras fuentes institucionales están planificadas para versiones posteriores de producción.
+</Note>

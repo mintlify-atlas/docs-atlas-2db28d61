@@ -1,133 +1,61 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
-icon: 'star'
+title: "Evolución Patrimonial: plataforma de auditoría patrimonial"
+description: "Plataforma de auditoría para OIC del gobierno mexicano: busca declaraciones patrimoniales, compara periodos y detecta incongruencias automáticamente."
 ---
 
-## Setting up
+Evolución Patrimonial es una plataforma de auditoría diseñada para órganos internos de control (OIC) y auditores del sector público en México. La herramienta permite consultar declaraciones patrimoniales de servidores públicos desde múltiples fuentes de datos, compararlas entre periodos fiscales y detectar automáticamente incongruencias en el incremento del patrimonio.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Introducción" icon="landmark" href="/introduction">
+    Conoce qué es Evolución Patrimonial, para quién está diseñado y cómo se organiza la plataforma.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Inicio rápido" icon="rocket" href="/quickstart">
+    Accede al sistema y realiza tu primera comparación patrimonial en minutos.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Buscar declaraciones" icon="magnifying-glass" href="/features/search-declarations">
+    Consulta declaraciones por RFC, nombre o institución en las fuentes de datos configuradas.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Comparación patrimonial" icon="scale-balanced" href="/features/patrimonial-comparison">
+    Compara dos declaraciones y obtén un análisis automático de congruencia patrimonial.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## Flujo de trabajo principal
 
-Everything you need to create world-class documentation.
+<Steps>
+  <Step title="Inicia sesión">
+    Accede a la plataforma con tu RFC y contraseña institucional. El sistema te redirige automáticamente al **Dashboard del Auditor**.
+  </Step>
+  <Step title="Busca la declaración">
+    Ve a **Buscar Declaraciones** e ingresa el nombre, RFC o CURP del servidor público que deseas revisar. Filtra por institución, periodo o tipo de declaración.
+  </Step>
+  <Step title="Compara periodos">
+    Desde los resultados, haz clic en el ícono de comparación junto a cualquier declaración. Selecciona el periodo base y el periodo reciente para iniciar el análisis.
+  </Step>
+  <Step title="Genera la revisión">
+    Revisa el panel de congruencia patrimonial con el semáforo de riesgo. Si detectas inconsistencias, guarda el análisis como un **expediente de revisión** para su seguimiento.
+  </Step>
+</Steps>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## Explora por módulo
 
-## Make your content agent ready
-
-Make your docs work for humans and AI agents alike.
-
-<Columns cols={2}>
-  <Card
-    title="Prompt component"
-    icon="robot"
-    href="/agent-ready/prompt"
-  >
-    Embed shareable AI prompts readers can copy or open in Cursor.
+<CardGroup cols={3}>
+  <Card title="Dashboard" icon="chart-pie" href="/features/dashboard">
+    Vista general con KPIs, revisiones recientes y distribución de riesgo.
   </Card>
-  <Card
-    title="Visibility"
-    icon="eye"
-    href="/agent-ready/visibility"
-  >
-    Show different content to humans and agents reading your docs.
+  <Card title="Mis revisiones" icon="folder-open" href="/features/revisions">
+    Gestiona y filtra todos tus expedientes de evolución patrimonial.
   </Card>
-  <Card
-    title="Contextual menu"
-    icon="bolt"
-    href="/agent-ready/contextual"
-  >
-    Give readers one-click access to Claude, ChatGPT, Cursor, and more.
+  <Card title="Fuentes de datos" icon="database" href="/admin/data-sources">
+    Configura las conexiones a APIs externas como SFP o plataformas estatales.
   </Card>
-  <Card
-    title="AI coding tools"
-    icon="wand-magic-sparkles"
-    href="/ai-tools/claude-code"
-  >
-    Set up Claude Code, Cursor, or Windsurf with Mintlify's skill.
+  <Card title="Bitácora" icon="clock-rotate-left" href="/admin/audit-log">
+    Consulta el registro completo de acciones del sistema para trazabilidad.
   </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+  <Card title="Modelos de datos" icon="table" href="/reference/data-models">
+    Referencia técnica de las estructuras de declaración, revisión y usuario.
+  </Card>
+  <Card title="Roles y permisos" icon="shield-halved" href="/reference/user-roles">
+    Comprende las diferencias entre Auditor, Administrador y Jefe de OIC.
+  </Card>
+</CardGroup>

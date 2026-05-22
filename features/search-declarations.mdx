@@ -1,0 +1,70 @@
+---
+title: "Buscar y filtrar declaraciones patrimoniales de servidores"
+description: "Consulta declaraciones patrimoniales por nombre, RFC o CURP en todas las fuentes conectadas. Filtra por institución, periodo y tipo de declaración."
+---
+
+El módulo **Buscar Declaraciones** (`/declaraciones/buscar`) se conecta simultáneamente a todas las fuentes de datos configuradas en la plataforma y devuelve un conjunto unificado de resultados. Esto elimina la necesidad de consultar cada sistema gubernamental por separado y te permite encontrar cualquier declaración disponible desde un único formulario.
+
+<Tip>
+Usa el RFC para obtener coincidencias exactas del servidor público que buscas. Si no conoces el RFC completo, ingresa parte del nombre para realizar una búsqueda más amplia.
+</Tip>
+
+## Formulario de búsqueda
+
+El formulario principal está compuesto por tres campos de filtrado:
+
+<Steps>
+  <Step title="Búsqueda General">
+    Campo de texto libre (`placeholder`: "Nombre, RFC o CURP..."). Acepta nombre completo o parcial, el RFC con formato estándar SAT (13 caracteres) o el CURP (18 caracteres). La búsqueda no distingue mayúsculas de minúsculas.
+  </Step>
+  <Step title="Institución / Ente Público">
+    Menú desplegable para filtrar por institución de adscripción del servidor público. Las opciones disponibles son:
+    - **Todas las instituciones** (valor por defecto)
+    - Secretaría de la Función Pública (SFP)
+    - Secretaría de Hacienda y Crédito Público (SHCP)
+    - Secretaría de Educación Pública (SEP)
+    - Secretaría de Salud
+  </Step>
+  <Step title="Periodo">
+    Menú desplegable para limitar los resultados a un ejercicio fiscal específico. Opciones disponibles: **Todos** (por defecto), 2024, 2023, 2022 y 2021.
+  </Step>
+</Steps>
+
+Haz clic en **Buscar Declaraciones** para ejecutar la consulta. Durante la carga aparece un indicador giratorio en el botón. Los resultados se muestran debajo del formulario en cuanto la búsqueda concluye.
+
+## Filtros avanzados
+
+Debajo de los tres campos principales se encuentra el botón **Filtros Avanzados** (ícono de embudo). Al hacer clic se despliega un panel adicional con la siguiente opción:
+
+| Campo | Descripción |
+|---|---|
+| **Fuente de Datos** | Selecciona una fuente específica de entre las activas (p. ej. "SFP Declaranet Nacional", "Plataforma Digital Nacional (SESA)"). Por defecto se consultan todas las fuentes. |
+
+El panel se anima al abrirse y puede ocultarse nuevamente pulsando el mismo botón.
+
+## Tabla de resultados
+
+Una vez ejecutada la búsqueda, la tabla de resultados muestra el conteo de declaraciones encontradas junto con las siguientes columnas:
+
+| Columna | Descripción |
+|---|---|
+| **Servidor Público** | Nombre completo del servidor público con el RFC en texto pequeño debajo. |
+| **Institución / Cargo** | Nombre de la institución de adscripción y el cargo o comisión reportado en la declaración. |
+| **Periodo** | Año fiscal (`ejercicio`) de la declaración, p. ej. `2022` o `2023`. |
+| **Tipo** | Badge que indica el tipo de declaración: `INICIAL`, `MODIFICACION` o `CONCLUSION`. |
+| **Acciones** | Dos íconos de acción por fila (ver detalle y comparar). |
+
+### Acciones por fila
+
+- **Ver detalle** (ícono de ojo, azul): navega a `/declaraciones/{id}` para consultar el contenido completo de la declaración.
+- **Comparar evolución** (ícono GitCompare, índigo): navega a `/comparacion?rfc={RFC}` con el RFC preseleccionado para iniciar una comparación patrimonial directamente desde el resultado de búsqueda.
+
+## Sorting
+
+Haz clic en cualquier encabezado de columna para ordenar los resultados de forma ascendente. Un segundo clic invierte el orden a descendente. El ícono del encabezado activo cambia de `↕` (sin orden activo) a `↑` (ascendente) o `↓` (descendente) para indicar el criterio en uso.
+
+Las columnas ordenables son: **Servidor Público**, **Institución / Cargo**, **Periodo** y **Tipo**.
+
+## Exportar
+
+En la parte superior derecha de la tabla de resultados se encuentra el botón **Exportar Listado** (ícono de descarga). Úsalo para obtener un archivo con el conjunto de declaraciones actualmente visible en la tabla, incluyendo los filtros y el orden aplicados.
